@@ -2,12 +2,14 @@ import { useState } from 'react'
 import searchStr from './Search'
 import Person from './Person'
 import personService from './services/persons'
+import Notification from './Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
+  const [message, setMessage] = useState('')
   
   personService
     .getAll()
@@ -25,9 +27,17 @@ const App = () => {
     for (let p in persons) {
       if (persons[p].name === newName) {
         personObject["id"] = persons[p].id
+        setMessage(`Updated ${newName}'s number`)
+        setTimeout(() => {
+          setMessage('')
+        }, 5000)
         return updatePerson(persons[p].id, personObject)
       }
     }
+    setMessage(`Added ${newName}`)
+    setTimeout(() => {
+      setMessage('')
+    }, 5000)
     personService
       .add(personObject)
       .then(response => {
@@ -77,6 +87,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <p>filter shown with
         <input
         onChange={handleSearchChange}
