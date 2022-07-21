@@ -17,23 +17,24 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-    if (!persons.some(p => p.name === newName)) {
-      const personObject = {
-        name: newName,
-        number: newNumber
-      }
+    const personObject = {
+      name: newName,
+      number: newNumber
+    }
 
-      personService
-        .add(personObject)
-        .then(response => {
-          setPersons(persons.concat(response.data))
-          setNewName('')
-          setNewNumber('')
-        })
+    for (let p in persons) {
+      if (persons[p].name === newName) {
+        personObject["id"] = persons[p].id
+        return updatePerson(persons[p].id, personObject)
+      }
     }
-    else {
-      alert(`${newName} is already added to phonebook`)
-    }
+    personService
+      .add(personObject)
+      .then(response => {
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewNumber('')
+      })
   }
 
   const deletePerson = (person) => {
@@ -42,6 +43,17 @@ const App = () => {
     if (confirm) {
       personService
         .del(person.id)
+        .then(persons =>
+          setPersons(persons)
+    )}
+  }
+  
+  const updatePerson = (id, person) => {
+    const msg = `${person.name} is already added to the phonebook, replace the old number with a new one?`
+    const confirm = window.confirm(msg)
+    if (confirm) {
+      personService
+        .update(id, person)
         .then(persons =>
           setPersons(persons)
     )}

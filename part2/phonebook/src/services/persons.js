@@ -15,10 +15,16 @@ const del = id => {
   return getAll()
 }
 
+const update = (id, newObject) => {
+  axios.put(`${baseUrl}/${id}`, newObject)
+  return getAll()
+}
+
 const exportedObjects = {
   getAll,
   add,
-  del
+  del,
+  update
 }
 
 export default exportedObjects
