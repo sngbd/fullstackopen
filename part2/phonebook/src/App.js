@@ -10,6 +10,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
   const [message, setMessage] = useState('')
+  const [isError, setIsError] = useState(false)
   
   useEffect(() => {
     personService
@@ -29,23 +30,20 @@ const App = () => {
     for (let p in persons) {
       if (persons[p].name === newName) {
         personObject["id"] = persons[p].id
-        setMessage(`Updated ${newName}'s number`)
-        setTimeout(() => {
-          setMessage('')
-        }, 5000)
         return updatePerson(persons[p].id, personObject)
       }
     }
-    setMessage(`Added ${newName}`)
-    setTimeout(() => {
-      setMessage('')
-    }, 5000)
+
     personService
       .add(personObject)
-      .then(response => {
-        setPersons(persons.concat(response.data))
+      .then(person => {
+        setPersons(persons.concat(person))
         setNewName('')
         setNewNumber('')
+        setMessage(`Added ${newName}`)
+        setTimeout(() => {
+          setMessage('')
+        }, 5000)
       })
   }
 
@@ -55,9 +53,8 @@ const App = () => {
     if (confirm) {
       personService
         .del(person.id)
-        .then(persons =>
-          setPersons(persons)
-    )}
+      setPersons(persons.filter(p => person.id !== p.id))
+    }
   }
   
   const updatePerson = (id, person) => {
@@ -66,30 +63,44 @@ const App = () => {
     if (confirm) {
       personService
         .update(id, person)
-        .then(persons =>
-          setPersons(persons)
-    )}
+        .then(person => {
+          setMessage(`Updated ${person.name}'s number`)
+          setPersons(persons.map(p => p.id !== id ? p : person))
+          setTimeout(() => {
+            setMessage('')
+          }, 5000)
+        }
+        )
+        .catch((error) => {
+          setPersons(persons.filter(p => p.id !== id))
+          setNewName('')
+          setNewNumber('')
+          setIsError(true)
+          setMessage(`${person.name} was already deleted from server`)
+          setTimeout(() => {
+            setMessage('')
+            setIsError(false)
+          }, 5000)
+        })
+      }
   }
 
   const handleSearchChange = (event) => {
-    console.log(event.target.value)
     setNewSearch(event.target.value)
   }
 
   const handleNameChange = (event) => {
-    console.log(event.target.value)
     setNewName(event.target.value)
   }
 
   const handleNumberChange = (event) => {
-    console.log(event.target.value)
     setNewNumber(event.target.value)
   }
   
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={message} />
+      <Notification message={message} isError={isError} />
       <p>filter shown with
         <input
         onChange={handleSearchChange}
