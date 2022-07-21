@@ -1,23 +1,20 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
+import { useState } from 'react'
 import searchStr from './Search'
 import Person from './Person'
-import noteService from './services/persons'
+import personService from './services/persons'
 
 const App = () => {
-  useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
-      })
-  }, [])
-
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
   
+  personService
+    .getAll()
+    .then(persons => {
+      setPersons(persons)
+    })
+
   const addPerson = (event) => {
     event.preventDefault()
     if (!persons.some(p => p.name === newName)) {
@@ -26,19 +23,30 @@ const App = () => {
         number: newNumber
       }
 
-      noteService
-      .add(personObject)
-      .then(response => {
-        setPersons(persons.concat(response.data))
-        setNewName('')
-        setNewNumber('')
-      })
+      personService
+        .add(personObject)
+        .then(response => {
+          setPersons(persons.concat(response.data))
+          setNewName('')
+          setNewNumber('')
+        })
     }
     else {
       alert(`${newName} is already added to phonebook`)
     }
   }
-  
+
+  const deletePerson = (person) => {
+    const msg = `Delete ${person.name}?`
+    const confirm = window.confirm(msg)
+    if (confirm) {
+      personService
+        .del(person.id)
+        .then(persons =>
+          setPersons(persons)
+    )}
+  }
+
   const handleSearchChange = (event) => {
     console.log(event.target.value)
     setNewSearch(event.target.value)
@@ -81,9 +89,15 @@ const App = () => {
         </div>
       </form>
       <h3>Numbers</h3>
-        {searchStr(persons, newSearch).map(person =>
-          <Person key={person.name} person={person} />
-        )}
+        {
+          searchStr(persons, newSearch).map(person =>
+            <Person 
+              key={person.name} 
+              person={person} 
+              delQuery={() => deletePerson(person)}
+            />
+          )
+        }
     </div>
   )
 }
