@@ -1,17 +1,10 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-
-const Person = ({person}) => {
-return (
-  <li key={person.id}>{person.name} {person.number}</li>
-)}
-
-const searchStr = (persons, newSearch) => persons.filter(
-  person => person.name.toLowerCase().includes((newSearch).toLowerCase())
-  )
+import searchStr from './Search'
+import Person from './Person'
+import noteService from './services/persons'
 
 const App = () => {
-  const [persons, setPersons] = useState([])
   useEffect(() => {
     axios
       .get('http://localhost:3001/persons')
@@ -19,6 +12,8 @@ const App = () => {
         setPersons(response.data)
       })
   }, [])
+
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
@@ -30,18 +25,14 @@ const App = () => {
         name: newName,
         number: newNumber
       }
-      axios
-        .post('http://localhost:3001/persons', personObject)
-        .then(response => {
-          console.log(response)
-        })
-        .catch(e => {
-          console.log(e);
-        });
-      
-      setPersons(persons.concat(personObject))
-      setNewName('')
-      setNewNumber('')
+
+      noteService
+      .add(personObject)
+      .then(response => {
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewNumber('')
+      })
     }
     else {
       alert(`${newName} is already added to phonebook`)
