@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import searchStr from './Search'
 import Person from './Person'
 import personService from './services/persons'
@@ -11,11 +11,13 @@ const App = () => {
   const [newSearch, setNewSearch] = useState('')
   const [message, setMessage] = useState('')
   
-  personService
-    .getAll()
-    .then(persons => {
-      setPersons(persons)
-    })
+  useEffect(() => {
+    personService
+      .getAll()
+      .then(persons => {
+        setPersons(persons)
+      })
+  }, [])
 
   const addPerson = (event) => {
     event.preventDefault()
