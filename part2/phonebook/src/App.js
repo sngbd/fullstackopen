@@ -45,14 +45,37 @@ const App = () => {
           setMessage('')
         }, 5000)
       })
+      .catch((error) => {
+        setIsError(true)
+        setMessage(error.response.data.error)
+        setTimeout(() => {
+          setMessage('')
+          setIsError(false)
+        }, 5000)
+      })
   }
 
   const deletePerson = (person) => {
     const msg = `Delete ${person.name}?`
     const confirm = window.confirm(msg)
     if (confirm) {
+      setMessage(`Deleted ${person.name}'s number`)
+      setTimeout(() => {
+        setMessage('')
+      }, 5000)
       personService
         .del(person.id)
+        .catch((error) => {
+          setPersons(persons.filter(p => person.id !== p.id))
+          setNewName('')
+          setNewNumber('')
+          setIsError(true)
+          setMessage(`${person.name} was already deleted from server`)
+          setTimeout(() => {
+            setMessage('')
+            setIsError(false)
+          }, 5000)
+        })
       setPersons(persons.filter(p => person.id !== p.id))
     }
   }
@@ -72,11 +95,8 @@ const App = () => {
         }
         )
         .catch((error) => {
-          setPersons(persons.filter(p => p.id !== id))
-          setNewName('')
-          setNewNumber('')
           setIsError(true)
-          setMessage(`${person.name} was already deleted from server`)
+          setMessage(error.response.data.error)
           setTimeout(() => {
             setMessage('')
             setIsError(false)
