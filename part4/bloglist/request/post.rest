@@ -1,0 +1,9 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+   "title": "Git Home",
+   "author": "someone",
+   "url": "https://opensource.com/article/21/4/git-home",
+   "likes": "1"
+}
