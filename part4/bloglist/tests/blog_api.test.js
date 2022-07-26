@@ -24,20 +24,13 @@ test('blogs are returned as json', async () => {
 test('unique identifier property of the blog posts is named id', async () => {
   const response = await api.get('/api/blogs').expect(200)
   
-  expect(response).toBeDefined()
+  response.body.forEach(res => expect(res.id).toBeDefined())
 })
 
 test('a valid blogs can be added', async () => {
-  const newBlog = {
-    title: 'wubbalubadubdub',
-    author: 'rick',
-    url: 'https://nevergonnagiveyouup.com',
-    likes: 6969
-  }
-  
   await api
     .post('/api/blogs')
-    .send(newBlog)
+    .send(helper.newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
   
@@ -48,6 +41,17 @@ test('a valid blogs can be added', async () => {
   expect(title).toContain(
     'wubbalubadubdub'
   )
+})
+
+test('likes property default to 0 if it is missing.', async () => {
+  await api
+    .post('/api/blogs')
+    .send(helper.newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+  
+  const response = await api.get('/api/blogs').expect(200)
+  expect(response.body[2].likes).toBeDefined()
 })
 
 afterAll(() => {

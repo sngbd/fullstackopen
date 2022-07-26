@@ -15,11 +15,17 @@ const initialBlogs = [
   }
 ]
 
+const newBlog = {
+  title: 'wubbalubadubdub',
+  author: 'rick',
+  url: 'https://nevergonnagiveyouup.com'
+}
+
 const blogsInDb = async () => {
   const blogs = await Blog.find({})
   return blogs.map(blog => blog.toJSON())
 }
 
 module.exports = {
-  initialBlogs, blogsInDb
+  initialBlogs, newBlog, blogsInDb
 }
