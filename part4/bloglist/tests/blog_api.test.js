@@ -51,7 +51,14 @@ test('likes property default to 0 if it is missing.', async () => {
     .expect('Content-Type', /application\/json/)
   
   const response = await api.get('/api/blogs').expect(200)
-  expect(response.body[2].likes).toBeDefined()
+  expect(response.body[2].likes).toBe(0)
+})
+
+test('400 bad request if title and url properties missing', async () => {
+  await api
+    .post('/api/blogs')
+    .send(helper.missingTitleUrl)
+    .expect(400)
 })
 
 afterAll(() => {
