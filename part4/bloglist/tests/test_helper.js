@@ -25,11 +25,18 @@ const missingTitleUrl = {
   author: 'author'
 }
 
+const blogUpdate = {
+  title: 'How I do my computing',
+  author: 'Richard Stallman',
+  url: 'https://stallman.org/stallman-computing.html',
+  likes: 90
+}
+
 const blogsInDb = async () => {
   const blogs = await Blog.find({})
   return blogs.map(blog => blog.toJSON())
 }
 
 module.exports = {
-  initialBlogs, newBlog, blogsInDb, missingTitleUrl
+  initialBlogs, newBlog, blogsInDb, missingTitleUrl, blogUpdate
 }
