@@ -3,8 +3,8 @@ Content-Type: application/json
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2MmUwYTBjNDhiMWRhOTY4NDA3Y2EwOTEiLCJpYXQiOjE2NTg5MDUzNTR9.H-iFtPrBhJhhtufNGlS-vg22r69j59AKIrpPqg4Cdpc
 
 {
-   "title": "title",
-   "author": "author",
-   "url": "https://url",
-   "likes": "696969"
+   "title": "randomtitle",
+   "author": "mluukkai",
+   "url": "https://urlstring",
+   "likes": "0123"
 }

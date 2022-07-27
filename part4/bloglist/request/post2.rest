@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNuZ2JkIiwiaWQiOiI2MmUwZWIzYTJkZTVjMzhmMDliNWI5OTMiLCJpYXQiOjE2NTg5MDc1NDh9.DGMnHKGg4PYZVS26vuY9ODKZtbxiz0psUdZ2xsyjSNY
+
+{
+   "title": "test",
+   "author": "sngbd",
+   "url": "https://stringurl",
+   "likes": "0123"
+}
