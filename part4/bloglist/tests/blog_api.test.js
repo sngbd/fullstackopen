@@ -5,13 +5,31 @@ const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
 
+let authorization
 beforeEach(async () => {
-  await Blog.deleteMany({})
+  const newUser = {
+    username: 'anon',
+    name: 'anon',
+    password: 'anon'
+  }
 
-  const blogObjects = helper.initialBlogs
-    .map(blog => new Blog(blog))
-  const promiseArray = blogObjects.map(blog => blog.save())
-  await Promise.all(promiseArray)
+  await api
+    .post('/api/users')
+    .send(newUser)
+  
+  const result = await api
+    .post('/api/login')
+    .send(newUser)
+  
+  authorization = { Authorization: `bearer ${result.body.token}` }
+
+  await Blog.deleteMany({})
+  for (i in helper.initialBlogs) {
+    await api
+      .post('/api/blogs')
+      .send(helper.initialBlogs[i])
+      .set(authorization)
+  }
 })
 
 describe('when there is initially some blogs saved', () => {
@@ -33,6 +51,7 @@ describe('addition of a new blog', () => {
   test('a valid blogs can be added', async () => {
     await api
       .post('/api/blogs')
+      .set(authorization)
       .send(helper.newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -49,6 +68,7 @@ describe('addition of a new blog', () => {
   test('likes property default to 0 if it is missing.', async () => {
     await api
       .post('/api/blogs')
+      .set(authorization)
       .send(helper.newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -60,6 +80,7 @@ describe('addition of a new blog', () => {
   test('400 bad request if title and url properties missing', async () => {
     await api
       .post('/api/blogs')
+      .set(authorization)
       .send(helper.missingTitleUrl)
       .expect(400)
   })
@@ -72,6 +93,7 @@ describe('deletion of a blog', () => {
 
     await api
       .delete(`/api/blogs/${blogtoDelete.id}`)
+      .set(authorization)
       .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
@@ -103,6 +125,15 @@ describe('update of a blog', () => {
     
     expect(blogsAtEnd[0].likes).toBe(helper.blogUpdate.likes)
    })
+})
+
+describe('unauthorized request', () => {
+  test('adding a blog fails with status code 401 when a token is not provided', async () => {
+    await api
+      .post('/api/blogs')
+      .send(helper.newBlog)
+      .expect(401)
+  })
 })
 
 afterAll(() => {
