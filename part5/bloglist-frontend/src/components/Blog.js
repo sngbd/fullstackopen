@@ -16,7 +16,7 @@ const Blog = ({blog}) => {
   const updateLikes = () => {
     const newBlog = {
       ...blog,
-      likes: blog.likes + 1
+      likes: likes + 1
     }
     blogService.update(blog.id, newBlog)
     setLikes(likes + 1)
