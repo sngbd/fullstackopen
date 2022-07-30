@@ -106,7 +106,7 @@ const App = () => {
       <h2>blogs</h2>
       <Notification message={message} isError={isError} />
       <p>{user.name} logged in<button onClick={logout}>logout</button></p>
-      <Togglable buttonLabel='create new note' ref={blogFormRef}>
+      <Togglable buttonLabel='create new note' toggleLabel='cancel' ref={blogFormRef}>
         <BlogForm createBlog={createBlog} />
       </Togglable>
       {blogs.map(blog =>
