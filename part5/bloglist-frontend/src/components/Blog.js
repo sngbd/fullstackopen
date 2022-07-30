@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import blogService from '../services/blogs'
 import Togglable from "./Togglable"
 
 const Blog = ({blog}) => {
@@ -8,6 +10,17 @@ const Blog = ({blog}) => {
     borderWidth: 1,
     marginBottom: 5
   }
+  
+  const [likes, setLikes] = useState(blog.likes)
+  
+  const updateLikes = () => {
+    const newBlog = {
+      ...blog,
+      likes: blog.likes + 1
+    }
+    blogService.update(blog.id, newBlog)
+    setLikes(likes + 1)
+  }
 
     return (
     <div style={blogStyle}>
@@ -16,7 +29,7 @@ const Blog = ({blog}) => {
         <Togglable buttonLabel='view' toggleLabel='hide'>
           {blog.url} 
           <br />
-          likes {blog.likes} <button>likes</button> 
+          likes {likes} <button onClick={updateLikes}>likes</button> 
           <br />
           {blog.user.name} 
           <br />
