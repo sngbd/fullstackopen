@@ -2,7 +2,7 @@ import { useState } from 'react'
 import blogService from '../services/blogs'
 import Togglable from "./Togglable"
 
-const Blog = ({blog}) => {
+const Blog = ({blog, user, setBlogs}) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -21,6 +21,19 @@ const Blog = ({blog}) => {
     blogService.update(blog.id, newBlog)
     setLikes(likes + 1)
   }
+  
+  const deleteBlog = () => {
+    const msg = `Remove blog ${blog.title} by ${blog.author}`
+    if (window.confirm(msg)) {
+      const config = {
+        headers: { Authorization: `bearer ${user.token}` }
+      }
+      blogService.remove(blog.id, config)
+      blogService.getAll().then(blogs =>
+        setBlogs(blogs.sort((a, b) => b.likes - a.likes))
+    )
+    }
+  }
 
     return (
     <div style={blogStyle}>
@@ -29,10 +42,12 @@ const Blog = ({blog}) => {
         <Togglable buttonLabel='view' toggleLabel='hide'>
           {blog.url} 
           <br />
-          likes {likes} <button onClick={updateLikes}>likes</button> 
+          likes {likes} <button onClick={updateLikes}>like</button> 
           <br />
           {blog.user.name} 
           <br />
+          {blog.user.name === user.name &&
+          <button onClick={deleteBlog}>remove</button>}
         </Togglable>
       </div>  
     </div>
