@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
-import Togglable from "./Togglable"
+import Togglable from './Togglable'
 
-const Blog = ({blog, user, setBlogs}) => {
+const Blog = ({ blog, user, setBlogs }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -10,9 +10,9 @@ const Blog = ({blog, user, setBlogs}) => {
     borderWidth: 1,
     marginBottom: 5
   }
-  
+
   const [likes, setLikes] = useState(blog.likes)
-  
+
   const updateLikes = () => {
     const newBlog = {
       ...blog,
@@ -21,7 +21,7 @@ const Blog = ({blog, user, setBlogs}) => {
     blogService.update(blog.id, newBlog)
     setLikes(likes + 1)
   }
-  
+
   const deleteBlog = () => {
     const msg = `Remove blog ${blog.title} by ${blog.author}`
     if (window.confirm(msg)) {
@@ -31,25 +31,25 @@ const Blog = ({blog, user, setBlogs}) => {
       blogService.remove(blog.id, config)
       blogService.getAll().then(blogs =>
         setBlogs(blogs.sort((a, b) => b.likes - a.likes))
-    )
+      )
     }
   }
 
-    return (
+  return (
     <div style={blogStyle}>
       <div>
-        {blog.title} {blog.author} 
+        {blog.title} {blog.author}
         <Togglable buttonLabel='view' toggleLabel='hide'>
-          {blog.url} 
+          {blog.url}
           <br />
-          likes {likes} <button onClick={updateLikes}>like</button> 
+          likes {likes} <button onClick={updateLikes}>like</button>
           <br />
-          {blog.user.name} 
+          {blog.user.name}
           <br />
           {blog.user.name === user.name &&
           <button onClick={deleteBlog}>remove</button>}
         </Togglable>
-      </div>  
+      </div>
     </div>
   )
 }
