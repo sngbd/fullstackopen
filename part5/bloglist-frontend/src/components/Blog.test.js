@@ -3,6 +3,7 @@ import '@testing-library/jest-dom/extend-expect'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Togglable from './Togglable'
+import BlogForm from './BlogForm'
 
 describe('<Togglable />', () => {
   const mockHandler = jest.fn()
@@ -67,5 +68,25 @@ describe('<Togglable />', () => {
     await usr.click(likeButton[0])
 
     expect(mockHandler.mock.calls).toHaveLength(2)
+  })
+})
+
+describe('<BlogForm />', () => {
+  test('form calls the event handler it received as props with the right details when a new blog is created', async () => {
+    const createBlog = jest.fn()
+    const usr = userEvent.setup()
+
+    render(<BlogForm createBlog={createBlog} />)
+
+    const input = screen.getAllByRole('textbox')
+    await usr.type(input[0], 'SICP')
+    await usr.type(input[1], 'Hal Abelson')
+    await usr.type(input[2], 'sicp.com')
+
+    const sendButton = screen.getByText('create')
+    await usr.click(sendButton)
+
+    expect(createBlog.mock.calls).toHaveLength(1)
+    expect(createBlog.mock.calls[0][0].title).toBe('SICP')
   })
 })
