@@ -5,6 +5,8 @@ import userEvent from '@testing-library/user-event'
 import Togglable from './Togglable'
 
 describe('<Togglable />', () => {
+  const mockHandler = jest.fn()
+
   const blog = {
     title: 'React',
     author: 'Meta',
@@ -27,7 +29,7 @@ describe('<Togglable />', () => {
         <Togglable buttonLabel='view' toggleLabel='hide'>
           {blog.url}
           <br />
-          likes {blog.likes} <button>like</button>
+          likes {blog.likes} <button onClick={mockHandler}>like</button>
           <br />
           {blog.user.name}
           <br />
@@ -53,5 +55,17 @@ describe('<Togglable />', () => {
 
     expect(component.container).toHaveTextContent('reactjs.org')
     expect(component.container).toHaveTextContent('likes 50932')
+  })
+
+  test('if the like button is clicked twice, the event handler the component received as props is called twice', async () => {
+    const usr = userEvent.setup()
+    const button = screen.getAllByText('view')
+    await usr.click(button[0])
+
+    const likeButton = screen.getAllByText('like')
+    await usr.click(likeButton[0])
+    await usr.click(likeButton[0])
+
+    expect(mockHandler.mock.calls).toHaveLength(2)
   })
 })
