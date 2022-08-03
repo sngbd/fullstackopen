@@ -52,7 +52,7 @@ const Blog = ({ blog, user, setBlogs }) => {
           <br />
           {blog.user.name}
           <br />
-          {blog.user.name === user.name && <button onClick={deleteBlog}>remove</button>}
+          {blog.user.name === user.name && <button id='remove-button' onClick={deleteBlog}>remove</button>}
         </Togglable>
       </div>
     </div>

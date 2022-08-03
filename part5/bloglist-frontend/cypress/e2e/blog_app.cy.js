@@ -63,10 +63,25 @@ describe('Blog app', function() {
       cy.contains('likes 1')
     })
 
-    it('User can remove a blog', function() {
-      cy.contains('remove').click()
+    it('User who created a blog can remove the blog', function() {
+      cy.get('#remove-button').click()
       cy.reload()
       cy.contains('SICP Hal Abelson').should('not.exist')
+    })
+
+    it.only('Other users cannot delete the blog', function() {
+      const user = {
+        name: 'Gilberdi Sinaga',
+        username: 'sngbd',
+        password: 'badpassword'
+      }
+      cy.request('POST', 'http://localhost:3003/api/users/', user)
+      cy.contains('logout').click()
+      cy.get('#username').type('sngbd')
+      cy.get('#password').type('badpassword')
+      cy.get('#login-button').click()
+      cy.contains('view').click()
+      cy.get('#remove-button').should('not.exist')
     })
   })
 })
