@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import blogService from '../services/blogs'
 import Togglable from './Togglable'
 
@@ -10,6 +10,12 @@ const Blog = ({ blog, user, setBlogs }) => {
     borderWidth: 1,
     marginBottom: 5
   }
+
+  useEffect(() => {
+    blogService.getAll().then(blogs =>
+      setBlogs(blogs.sort((a, b) => b.likes - a.likes))
+    )
+  }, [])
 
   const [likes, setLikes] = useState(blog.likes)
 
@@ -46,8 +52,7 @@ const Blog = ({ blog, user, setBlogs }) => {
           <br />
           {blog.user.name}
           <br />
-          {blog.user.name === user.name &&
-          <button onClick={deleteBlog}>remove</button>}
+          {blog.user.name === user.name && <button onClick={deleteBlog}>remove</button>}
         </Togglable>
       </div>
     </div>

@@ -50,18 +50,23 @@ describe('Blog app', function() {
       cy.get('#author-input').type('Hal Abelson')
       cy.get('#url-input').type('sicp.com')
       cy.get('#create-button').click()
+      cy.contains('view').click()
     })
 
     it('A blog can be created', function() {
-      cy.contains('SICP')
-      cy.contains('Hal Abelson')
+      cy.contains('SICP Hal Abelson')
       cy.contains('sicp.com')
     })
 
     it('User can like a blog', function() {
-      cy.contains('view').click()
       cy.contains('like').click()
       cy.contains('likes 1')
+    })
+
+    it('User can remove a blog', function() {
+      cy.contains('remove').click()
+      cy.reload()
+      cy.contains('SICP Hal Abelson').should('not.exist')
     })
   })
 })
