@@ -17,7 +17,7 @@ describe('Blog app', function() {
     cy.contains('login').click()
   })
 
-  describe('Login',function() {
+  describe('Login', function() {
     it('succeeds with correct credentials', function() {
       cy.get('#username').type('mluukkai')
       cy.get('#password').type('salainen')
@@ -69,7 +69,7 @@ describe('Blog app', function() {
       cy.contains('SICP Hal Abelson').should('not.exist')
     })
 
-    it.only('Other users cannot delete the blog', function() {
+    it('Other users cannot delete the blog', function() {
       const user = {
         name: 'Gilberdi Sinaga',
         username: 'sngbd',
@@ -82,6 +82,25 @@ describe('Blog app', function() {
       cy.get('#login-button').click()
       cy.contains('view').click()
       cy.get('#remove-button').should('not.exist')
+    })
+
+    it.only('blogs are ordered with descending likes', function() {
+      cy.contains('create new blog').click()
+      cy.get('#title-input').type('HtDP')
+      cy.get('#author-input').type('Matthias Felleisen')
+      cy.get('#url-input').type('htdp.com')
+      cy.get('#create-button').click()
+
+      cy.reload()
+      cy.get('.blog').eq(0).contains('view').click()
+      cy.get('.like-button').eq(0).click()
+      cy.get('.blog').eq(0).contains('hide').click()
+      cy.get('.blog').eq(1).contains('view').click()
+      cy.get('.like-button').eq(1).click().click()
+
+      cy.reload()
+      cy.get('.blog').eq(0).should('contain', 'HtDP Matthias Felleisen')
+      cy.get('.blog').eq(1).should('contain', 'SICP Hal Abelson')
     })
   })
 })
