@@ -1,3 +1,6 @@
 [submodule "part3"]
 	path = part3
 	url = https://github.com/sngbd/fullstackopen-part3
+[submodule "part9/patientor-frontend"]
+	path = part9/patientor-frontend
+	url = https://github.com/sngbd/patientor
