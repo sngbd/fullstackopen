@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import express from 'express';
 import cors from 'cors';
 import diagnoseService from './services/diagnoseService';
@@ -20,6 +22,18 @@ app.get('/api/diagnoses', (_req, res) => {
 
 app.get('/api/patients', (_req, res) => {
   res.send(patientService.getPatients());
+});
+
+app.post('/api/patients', (req, res) => {
+  const { name, dateOfBirth, ssn, gender, occupation } = req.body;
+  const newPatientEntry = patientService.addPatient(
+    name, 
+    dateOfBirth, 
+    ssn, 
+    gender, 
+    occupation 
+  );
+  res.json(newPatientEntry);
 });
 
 app.listen(PORT, () => {
